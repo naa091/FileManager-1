@@ -13,6 +13,8 @@ final class ViewController: UIViewController {
 
         setupTableView()
         setupNavBar()
+        NotificationCenter.default.addObserver(self, selector: #selector(loadFiles), name: .sortOrderChanged, object: nil)
+        
         loadFiles()
     }
 
@@ -52,19 +54,21 @@ final class ViewController: UIViewController {
         FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0]
     }
 
-    private func loadFiles() {
-        let documentsURL = getDocumentsDirectory()
-        if let contents = try? FileManager.default.contentsOfDirectory(atPath: documentsURL.path) {
-            fileNames = contents
-        }
-        tableView.reloadData()
-    }
-
     private func deleteFile(named fileName: String) {
         let url = getDocumentsDirectory().appendingPathComponent(fileName)
         try? FileManager.default.removeItem(at: url)
         loadFiles()
     }
+    
+    @objc private func loadFiles() {
+        let documentsURL = getDocumentsDirectory()
+        if let contents = try? FileManager.default.contentsOfDirectory(atPath: documentsURL.path) {
+            let isAscending = UserDefaults.standard.bool(forKey: "sort_ascending")
+            fileNames = isAscending ? contents.sorted() : contents.sorted().reversed()
+        }
+        tableView.reloadData()
+    }
+
 }
 
 extension ViewController: UITableViewDataSource, UITableViewDelegate {

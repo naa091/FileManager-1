@@ -6,6 +6,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         _ application: UIApplication,
         didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?
     ) -> Bool {
+        UserDefaults.standard.register(defaults: ["sort_ascending": true])
         return true
     }
 
